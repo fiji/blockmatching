@@ -44,6 +44,13 @@
 		</dependency>
 	</dependencies>
 
+	<scm>
+		<connection>scm:git:git://github.com/fiji/blockmatching</connection>
+		<developerConnection>scm:git:git@github.com:fiji/blockmatching</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/fiji/blockmatching</url>
+	</scm>
+
 	<repositories>
 		<!-- NB: for project parent, in case of partial checkout -->
 		<repository>
