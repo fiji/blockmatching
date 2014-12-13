@@ -10,7 +10,7 @@ import mpicbg.util.Timer;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RealPoint;
-import net.imglib2.collection.RealPointSampleList;
+import net.imglib2.RealPointSampleList;
 import net.imglib2.neighborsearch.NearestNeighborSearch;
 import net.imglib2.type.Type;
 import net.imglib2.type.numeric.ARGBType;
@@ -33,7 +33,7 @@ abstract public class AbstractBlockMatching implements PlugIn
 	static protected float maxLocalTrust = 3.0f;
 
 	static protected int meshResolution = 24;
-	
+
 	protected void addFields( final GenericDialog gd )
 	{
 		gd.addMessage( "Block Matching:" );
@@ -41,12 +41,12 @@ abstract public class AbstractBlockMatching implements PlugIn
 		gd.addNumericField( "search_radius :", searchRadius, 0, 6, "px" );
 		gd.addNumericField( "block_radius :", blockRadius, 0, 6, "px" );
 		gd.addNumericField( "resolution :", meshResolution, 0 );
-		
+
 		gd.addMessage( "Correlation Filters:" );
 		gd.addNumericField( "minimal_PMCC_r :", minR, 2 );
 		gd.addNumericField( "maximal_curvature_ratio :", maxCurvatureR, 2 );
 		gd.addNumericField( "maximal_second_best_r/best_r :", rodR, 2 );
-				
+
 		gd.addMessage( "Local Smoothness Filter:" );
 		gd.addCheckbox( "use_local_smoothness_filter", useLocalSmoothnessFilter );
 		gd.addChoice( "approximate_local_transformation :", modelStrings, modelStrings[ localModelIndex ] );
@@ -54,7 +54,7 @@ abstract public class AbstractBlockMatching implements PlugIn
 		gd.addNumericField( "maximal_local_displacement (absolute):", maxLocalEpsilon, 2, 6, "px" );
 		gd.addNumericField( "maximal_local_displacement (relative):", maxLocalTrust, 2 );
 	}
-	
+
 	protected void readFields( final GenericDialog gd )
 	{
 		scale = ( float )gd.getNextNumber();
@@ -69,7 +69,7 @@ abstract public class AbstractBlockMatching implements PlugIn
 		localRegionSigma = ( float )gd.getNextNumber();
 		maxLocalEpsilon = ( float )gd.getNextNumber();
 		maxLocalTrust = ( float )gd.getNextNumber();
-		
+
 		return;
 	}
 
@@ -100,14 +100,14 @@ abstract public class AbstractBlockMatching implements PlugIn
 			final float[] q = match.getP2().getW();
 			final float dx = ( q[ 0 ] - p[ 0 ] ) / searchRadius;
 			final float dy = ( q[ 1 ] - p[ 1 ] ) / searchRadius;
-			
+
 			final int rgb = Util.colorVector( dx, dy );
-			
+
 			samples.add( new RealPoint( p ), new ARGBType( rgb ) );
 		}
 		return samples;
 	}
-	
+
 	final static protected RealPointSampleList< ARGBType > matches2ColorSamples2( final Iterable< PointMatch > matches )
 	{
 		final RealPointSampleList< ARGBType > samples = new RealPointSampleList< ARGBType >( 2 );
@@ -117,14 +117,14 @@ abstract public class AbstractBlockMatching implements PlugIn
 			final float[] q = match.getP2().getW();
 			final float dx = ( q[ 0 ] - p[ 0 ] ) / searchRadius;
 			final float dy = ( q[ 1 ] - p[ 1 ] ) / searchRadius;
-			
+
 			final int rgb = Util.colorVector( dx, dy );
-			
+
 			samples.add( new RealPoint( q ), new ARGBType( rgb ) );
 		}
 		return samples;
 	}
-	
+
 	final static protected < T extends Type< T > > long drawNearestNeighbor(
 			final IterableInterval< T > target,
 			final NearestNeighborSearch< T > nnSearchSamples,

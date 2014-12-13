@@ -22,9 +22,9 @@ import mpicbg.models.PointMatch;
 import mpicbg.models.SpringMesh;
 import mpicbg.models.TranslationModel2D;
 import mpicbg.models.Vertex;
+import net.imglib2.KDTree;
 import net.imglib2.RealPoint;
-import net.imglib2.collection.KDTree;
-import net.imglib2.collection.RealPointSampleList;
+import net.imglib2.RealPointSampleList;
 import net.imglib2.exception.ImgLibException;
 import net.imglib2.img.imageplus.ImagePlusImg;
 import net.imglib2.img.imageplus.ImagePlusImgFactory;
@@ -35,10 +35,10 @@ public class BlockMatching_ExtractPoinRoi extends AbstractBlockMatching
 {
 	protected ImagePlus imp1;
 	protected ImagePlus imp2;
-	
+
 	static protected boolean exportPointRoi = true;
 	static protected boolean exportDisplacementVectors = false;
-	
+
 	final protected boolean setup()
 	{
 		final int[] ids = WindowManager.getIDList();
@@ -47,52 +47,52 @@ public class BlockMatching_ExtractPoinRoi extends AbstractBlockMatching
 			IJ.showMessage( "You should have at least two images open." );
 			return false;
 		}
-		
+
 		final String[] titles = new String[ ids.length ];
 		for ( int i = 0; i < ids.length; ++i )
 		{
 			titles[ i ] = ( WindowManager.getImage( ids[ i ] ) ).getTitle();
 		}
-		
-		
+
+
 		final GenericDialog gdBlockMatching = new GenericDialog( "Block Matching" );
-				
+
 		gdBlockMatching.addMessage( "Image Selection:" );
 		final String current = WindowManager.getCurrentImage().getTitle();
 		gdBlockMatching.addChoice( "source_image", titles, current );
 		gdBlockMatching.addChoice( "target_image", titles, current.equals( titles[ 0 ] ) ? titles[ 1 ] : titles[ 0 ] );
-		
+
 		addFields( gdBlockMatching );
-		
+
 		gdBlockMatching.addMessage( "Export:" );
 		gdBlockMatching.addCheckbox( "export point correspondences", exportPointRoi );
 		gdBlockMatching.addCheckbox( "export colorized displacement vectors", exportDisplacementVectors );
-		
+
 		gdBlockMatching.showDialog();
-		
+
 		if ( gdBlockMatching.wasCanceled() )
 			return false;
-		
+
 		imp1 = WindowManager.getImage( ids[ gdBlockMatching.getNextChoiceIndex() ] );
 		imp2 = WindowManager.getImage( ids[ gdBlockMatching.getNextChoiceIndex() ] );
-		
+
 		readFields( gdBlockMatching );
-		
+
 		exportPointRoi = gdBlockMatching.getNextBoolean();
 		exportDisplacementVectors = gdBlockMatching.getNextBoolean();
-		
-		return true;		
+
+		return true;
 	}
-	
-	
+
+
 	@Override
 	public void run( final String arg )
 	{
 		if ( !setup() )
 			return;
-		
+
 		final SpringMesh mesh = new SpringMesh( meshResolution, imp1.getWidth(), imp1.getHeight(), 1, 1000, 0.9f );
-		
+
 		final Collection< Vertex > vertices = mesh.getVertices();
 		final RealPointSampleList< ARGBType > maskSamples = new RealPointSampleList< ARGBType >( 2 );
 		for ( final Vertex vertex : vertices )
@@ -104,7 +104,7 @@ public class BlockMatching_ExtractPoinRoi extends AbstractBlockMatching
 
 		final FloatProcessor ip1 = ( FloatProcessor )imp1.getProcessor().convertToFloat().duplicate();
 		final FloatProcessor ip2 = ( FloatProcessor )imp2.getProcessor().convertToFloat().duplicate();
-					
+
 		final FloatProcessor ip1Mask = createMask( ( ColorProcessor )imp1.getProcessor().convertToRGB() );
 		final FloatProcessor ip2Mask = createMask( ( ColorProcessor )imp2.getProcessor().convertToRGB() );
 
@@ -141,10 +141,10 @@ public class BlockMatching_ExtractPoinRoi extends AbstractBlockMatching
 			e.printStackTrace();
 			return;
 		}
-			
+
 		IJ.log( pm12.size() + " blockmatch candidates found." );
-		
-		if ( useLocalSmoothnessFilter )		
+
+		if ( useLocalSmoothnessFilter )
 		{
 			final Model< ? > model = mpicbg.trakem2.align.Util.createModel( localModelIndex );
 			try
@@ -161,44 +161,44 @@ public class BlockMatching_ExtractPoinRoi extends AbstractBlockMatching
 			}
 			IJ.log( pm12.size() + " blockmatch candidates passed local smoothness filter." );
 		}
-		
+
 		if ( exportPointRoi )
 		{
 			final ArrayList< Point > pm12Sources = new ArrayList< Point >();
 			final ArrayList< Point > pm12Targets = new ArrayList< Point >();
-	
+
 			PointMatch.sourcePoints( pm12, pm12Sources );
 			PointMatch.targetPoints( pm12, pm12Targets );
-	
+
 			final PointRoi roi1 = mpicbg.ij.util.Util.pointsToPointRoi( pm12Sources );
 			final PointRoi roi2 = mpicbg.ij.util.Util.pointsToPointRoi( pm12Targets );
-	
+
 			imp1.setRoi( roi1 );
 			imp2.setRoi( roi2 );
 		}
-		
+
 		if ( exportDisplacementVectors )
 		{
 			final ArrayList< Point > pm12Targets = new ArrayList< Point >();
 			PointMatch.targetPoints( pm12, pm12Targets );
-			
+
 			final RealPointSampleList< ARGBType > maskSamples2 = new RealPointSampleList< ARGBType >( 2 );
 			for ( final Point point : pm12Targets )
 				maskSamples2.add( new RealPoint( point.getW() ), new ARGBType( 0xffffffff ) );
 
 			final ImagePlusImgFactory< ARGBType > factory = new ImagePlusImgFactory< ARGBType >();
-			
+
 			final KDTree< ARGBType > kdtreeMatches = new KDTree< ARGBType >( matches2ColorSamples( pm12 ) );
 			final KDTree< ARGBType > kdtreeMask = new KDTree< ARGBType >( maskSamples );
-			
-			
+
+
 			/* nearest neighbor */
 			final ImagePlusImg< ARGBType, ? > img = factory.create( new long[]{ imp1.getWidth(), imp1.getHeight() }, new ARGBType() );
 			drawNearestNeighbor(
 					img,
 					new NearestNeighborSearchOnKDTree< ARGBType >( kdtreeMatches ),
 					new NearestNeighborSearchOnKDTree< ARGBType >( kdtreeMask ) );
-			
+
 			try
 			{
 				img.getImagePlus().show();
