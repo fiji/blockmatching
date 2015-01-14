@@ -47,10 +47,10 @@
 	</ciManagement>
 
 	<scm>
-		<connection>scm:git:git://github.com/fiji/blockmatching</connection>
-		<developerConnection>scm:git:git@github.com:fiji/blockmatching</developerConnection>
+		<connection>scm:git:git://github.com/trakem2/blockmatching</connection>
+		<developerConnection>scm:git:git@github.com:trakem2/blockmatching</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/fiji/blockmatching</url>
+		<url>https://github.com/trakem2/blockmatching</url>
 	</scm>
 
 	<repositories>
