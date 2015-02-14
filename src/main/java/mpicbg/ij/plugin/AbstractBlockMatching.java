@@ -96,10 +96,10 @@ abstract public class AbstractBlockMatching implements PlugIn
 		final RealPointSampleList< ARGBType > samples = new RealPointSampleList< ARGBType >( 2 );
 		for ( final PointMatch match : matches )
 		{
-			final float[] p = match.getP1().getL();
-			final float[] q = match.getP2().getW();
-			final float dx = ( q[ 0 ] - p[ 0 ] ) / searchRadius;
-			final float dy = ( q[ 1 ] - p[ 1 ] ) / searchRadius;
+			final double[] p = match.getP1().getL();
+			final double[] q = match.getP2().getW();
+			final double dx = ( q[ 0 ] - p[ 0 ] ) / searchRadius;
+			final double dy = ( q[ 1 ] - p[ 1 ] ) / searchRadius;
 
 			final int rgb = Util.colorVector( dx, dy );
 
@@ -113,10 +113,10 @@ abstract public class AbstractBlockMatching implements PlugIn
 		final RealPointSampleList< ARGBType > samples = new RealPointSampleList< ARGBType >( 2 );
 		for ( final PointMatch match : matches )
 		{
-			final float[] p = match.getP1().getL();
-			final float[] q = match.getP2().getW();
-			final float dx = ( q[ 0 ] - p[ 0 ] ) / searchRadius;
-			final float dy = ( q[ 1 ] - p[ 1 ] ) / searchRadius;
+			final double[] p = match.getP1().getL();
+			final double[] q = match.getP2().getW();
+			final double dx = ( q[ 0 ] - p[ 0 ] ) / searchRadius;
+			final double dy = ( q[ 1 ] - p[ 1 ] ) / searchRadius;
 
 			final int rgb = Util.colorVector( dx, dy );
 
