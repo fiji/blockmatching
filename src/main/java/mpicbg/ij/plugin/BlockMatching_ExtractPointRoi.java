@@ -52,7 +52,7 @@ import net.imglib2.img.imageplus.ImagePlusImgFactory;
 import net.imglib2.neighborsearch.NearestNeighborSearchOnKDTree;
 import net.imglib2.type.numeric.ARGBType;
 
-public class BlockMatching_ExtractPoinRoi extends AbstractBlockMatching
+public class BlockMatching_ExtractPointRoi extends AbstractBlockMatching
 {
 	protected ImagePlus imp1;
 	protected ImagePlus imp2;
